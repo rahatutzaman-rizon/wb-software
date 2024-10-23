@@ -1,8 +1,22 @@
-# React + Vite
+# WB Software
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Description
+WB Software is a web-based application designed for efficient project management, allowing users to easily track orders, manage courses, and facilitate communication between students and trainers. The application aims to enhance the learning experience by providing a centralized platform for managing educational projects.
 
-Currently, two official plugins are available:
+## Features
+- **User Authentication**: Secure login and registration for users.
+- **Order Management**: Users can search for and view order details.
+- **Course Catalog**: List of available courses with detailed information.
+- **Responsive Design**: Optimized for various devices, ensuring a seamless user experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
+- **Frontend**: React, Next.js, Tailwind CSS
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB
+- **Authentication**: Firebase
+- **Version Control**: Git
+
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/rahatutzaman-rizon/wb-software.git
