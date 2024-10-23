@@ -1,39 +1,66 @@
 import { Outlet } from "react-router-dom";
 import NavbarTop from "../Shared/Navbar/NavbarTop";
 import MenuBar from "../Shared/Navbar/MenuBar";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { OrderContext } from "../ContextAPIs/OrderProvider";
 import useSmallScreen from "../Hooks/useSmallScreen";
 import Copyright from "../Shared/Footer/Copyright";
+import { Menu, X } from "lucide-react";
 
 const Layout = () => {
-  const { open, sidebarRef } = useContext(OrderContext);
+  const { open, setOpen, sidebarRef } = useContext(OrderContext);
   const [isSmallScreen] = useSmallScreen();
 
+  const toggleSidebar = () => {
+    setOpen(!open);
+  };
+
   return (
-    <div className="bg-primary overflow-hidden">
-      <div className="w-full h-screen justify-between mx-auto overflow-y-auto overflow-hidden flex ">
-        <div className=" flex items-start w-full">
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Menu Button */}
+      <button
+        onClick={toggleSidebar}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-lg hover:bg-gray-100"
+      >
+        {open ? (
+          <X className="h-6 w-6 text-gray-600" />
+        ) : (
+          <Menu className="h-6 w-6 text-gray-600" />
+        )}
+      </button>
+
+      <div className="flex min-h-screen">
+        {/* Overlay */}
+        {isSmallScreen && open && (
           <div
-            ref={sidebarRef}
-            className={`lg:relative fixed top-0 lg:top-0 ${
-              open ? "left-0" : "-left-[100%]"
-            } duration-300 w-[308px] z-50 h-[calc(100vh)] overflow-y-auto`}
-          >
-            <MenuBar></MenuBar>
+            className="fixed inset-0 bg-black/50 z-30 transition-opacity duration-300"
+            onClick={() => setOpen(false)}
+          />
+        )}
+
+        {/* Sidebar */}
+        <div
+          ref={sidebarRef}
+          className={`fixed lg:static top-0 z-40 h-full w-64 transform transition-transform duration-300 ease-in-out
+            ${open ? "translate-x-0" : "-translate-x-full"}
+            lg:translate-x-0 bg-white shadow-lg`}
+        >
+          <div className="h-full overflow-y-auto">
+            <MenuBar />
           </div>
-          <div className="w-full">
-            {isSmallScreen && open && (
-              <div className="absolute top-0 left-0 w-full inset-0 bg-black opacity-50 z-20"></div>
-            )}
-            <NavbarTop />
-            <div className="overflow-y-auto h-[calc(100vh-52px)]">
-              <div className="min-h-[calc(100vh-140px)]">
-              <Outlet />
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col min-w-0">
+          <NavbarTop />
+          <main className="flex-1 overflow-y-auto">
+            <div className="container mx-auto px-4 py-6">
+              <div className="min-h-[calc(100vh-200px)]">
+                <Outlet />
               </div>
               <Copyright />
             </div>
-          </div>
+          </main>
         </div>
       </div>
     </div>

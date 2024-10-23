@@ -1,132 +1,119 @@
-/* eslint-disable react/react-in-jsx-scope */
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-
-
-import { RiDeleteBin5Line } from "react-icons/ri";
+import { useEffect, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import { Link } from 'react-router-dom'; // Import Link
+import 'react-toastify/dist/ReactToastify.css';
 
 const Cart = () => {
-   
+    const [cart, setCart] = useState([]);
+
+    // Fetch cart items from localStorage on component mount
+    useEffect(() => {
+        const storedCart = localStorage.getItem('cart');
+        if (storedCart) {
+            setCart(JSON.parse(storedCart));
+        }
+    }, []);
+
+    // Function to update cart in localStorage
+    const updateLocalStorage = (updatedCart) => {
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+        setCart(updatedCart);
+    };
+
+    // Function to increase quantity
+    const increaseQuantity = (courseId) => {
+        const updatedCart = cart.map((item) => {
+            if (item.id === courseId) {
+                return { ...item, quantity: item.quantity + 1 };
+            }
+            return item;
+        });
+        updateLocalStorage(updatedCart);
+        toast.success('Quantity increased.');
+    };
+
+    // Function to decrease quantity
+    const decreaseQuantity = (courseId) => {
+        const updatedCart = cart.map((item) => {
+            if (item.id === courseId && item.quantity > 1) {
+                return { ...item, quantity: item.quantity - 1 };
+            }
+            return item;
+        });
+        updateLocalStorage(updatedCart);
+        toast.success('Quantity decreased.');
+    };
+
+    // Function to remove an item from the cart
+    const removeItem = (courseId) => {
+        const updatedCart = cart.filter((item) => item.id !== courseId);
+        updateLocalStorage(updatedCart);
+        toast.info('Course removed from the cart.');
+    };
+
+  
 
     return (
-        <div className="m-mt_16px">
-           
-            <h1 className="text-sm text-start md:text-text_xl lg:py-0 font-bold">
-                Cart
-            </h1>
-            <div className="pt-p_16px">
-                <div className="lg:flex items-start gap-3">
-                    <div className="w-full lg:w-[58%] bg-white border-2">
-                        <table className=" overflow-x-auto  w-full">
-                            <thead>
-                                <tr className="border-b-4 border-gray-300">
-                                    <th className="text-[14.4px] w-6/12 font-bold p-[7px] text-black">
-                                        Course
-                                    </th>
-                                    <th className="text-[14.4px] font-bold p-[7px] text-black">
-                                        Price
-                                    </th>
-                                    <th className="text-[14.4px] font-bold p-[7px] text-black">
-                                        Quantity
-                                    </th>
-                                    <th className="text-[14.4px] font-bold p-[7px] text-black">
-                                        Sub Total
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody className="overflow-x-auto ">
-                              
-                                    <tr  className="border-b border-gray-300 overflow-x-auto">
-                                        <td>
-                                            <div className="flex items-center justify-center ">
-                                                <div className="w-[20%] text-center flex items-center justify-center ">
-                                                    <RiDeleteBin5Line
-                                                        className="text-xl hover:text-footer_color cursor-pointer"
-                                                        
-                                                    />
-                                                </div>
-                                                <div className="flex flex-col text-center justify-center items-center py-2  w-[80%]">
-                                                    <div className="mask">
-                                                        <img
-                                                            className="h-[40px] w-[70px]"
-                                                            src=''
-                                                            alt='Course'
-                                                        />
-                                                    </div>
-                                                    <p className="text-[14.4px] px-[7px] text-center flex ">
-                                                       Course name  <span className="hidden lg:flex ">- unit name</span>
-                                                    </p>
-                                                </div>
-
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
-                                                discount price
-                                            </p>
-                                        </td>
-                                        <td>
-                                            <div className="flex justify-center">
-                                                <div className="border">
-                                                    <button
-                                                        className="px-4 w-[30px] font-bold font_standard my-1.5"
-                                                        
-                                                    >
-                                                        -
-                                                    </button>
-                                                </div>
-                                                <div className="border-y">
-                                                    <input
-                                                        type="number"
-                                                        className="font-bold w-[30px] lg:w-[60px] font_standard px-2 text-center mx-auto h-full"
-                                                      
-                                                    />
-                                                </div>
-                                                <div className="border">
-                                                    <button
-                                                        className="px-4 w-[30px] font-bold font_standard my-1.5"
-                                                       
-                                                    >
-                                                        +
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
-                                               
-                                                discount price * quantity
-                                            </p>
-                                        </td>
-                                    </tr>
-                                
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="lg:w-[41%] bg-white border-2 ">
-                        <div className="px-[30px]">
-                            <h2 className="font-bold text-start text-text_medium pt-2 pb-1 border-b-2 border-black">
-                                Cart Summary
-                            </h2>
-                            <div className="py-3 flex justify-between border-b border-gray-300">
-                                <p className="text-black font-bold">Total Price</p>
-                                <p className="text-black font-bold">
-                                    
+        <div className="max-w-6xl mx-auto p-4">
+            <h2 className="text-2xl font-bold mb-6">Your Cart</h2>
+            {cart.length === 0 ? (
+                <p className="text-gray-600">Your cart is empty.</p>
+            ) : (
+                <div className="grid gap-6">
+                    {cart.map((item) => (
+                        <div
+                            key={item.id}
+                            className="flex items-center bg-white shadow-md rounded-lg p-4"
+                        >
+                            <img
+                                src={item.photo}
+                                alt={item.course_name}
+                                className="w-20 h-20 object-cover rounded-md"
+                            />
+                            <div className="flex-1 ml-4">
+                                <h3 className="text-lg font-semibold">{item.course_name}</h3>
+                                <p className="text-gray-600">Trainer: {item.trainer_data?.name}</p>
+                                <div className="flex items-center mt-2">
+                                    <button
+                                        onClick={() => decreaseQuantity(item.id)}
+                                        className="bg-gray-200 px-2 py-1 rounded-l-md"
+                                    >
+                                        -
+                                    </button>
+                                    <span className="px-3 py-1 bg-gray-100">{item.quantity}</span>
+                                    <button
+                                        onClick={() => increaseQuantity(item.id)}
+                                        className="bg-gray-200 px-2 py-1 rounded-r-md"
+                                    >
+                                        +
+                                    </button>
+                                    <button
+                                        onClick={() => removeItem(item.id)}
+                                        className="ml-4 text-red-500"
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="ml-4">
+                                <p className="text-gray-800 font-bold">
+                                    Tk {item.discount_price * item.quantity}
                                 </p>
                             </div>
-                          
-                            <Link
-                                to={`/cart/checkout`}
-                                state={"bdt"}
-                                className="font-medium text-black mb-2 border-2 hover:bg-[#D2C5A2] duration-300 py-2 px-4  block text-center mx-auto w-full"
-                            >
-                                PROCEED TO CHECKOUT
-                            </Link>
+                            <div className="ml-4">
+                                <Link 
+                                    to={`/checkout/${item.id}`} // Unique checkout link for each item
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                >
+                                    Checkout
+                                </Link>
+                            </div>
                         </div>
-                    </div>
+                    ))}
+               
                 </div>
-            </div>
+            )}
+            <ToastContainer />
         </div>
     );
 };
